@@ -3,6 +3,15 @@
 
     <h1>欢迎使用自动化测试平台</h1>
     <el-divider/>
+    <div class="book_con01">
+      <h1 class="book_h01">如何开始</h1>
+      <p class="book_p">step1：维护测试环境域名：点击环境管理——新增——填写环境信息提交</p>
+      <p class="book_p">step2：维护接口api：点击接口管理——新增——填写接口信息提交</p>
+      <p class="book_p">step3：维护用例信息：点击用例管理——新增——填写用例信息提交</p>
+      <p class="book_p">step4：维护测试集信息：点击测试集管理——新增测试集信息——点击用例管理添加该测试集所需的用例及执行信息</p>
+      <p class="book_p">step5：维护任务信息：点击任务管理——新增执行任务信息——点击测试集管理添加该任务所需的测试集等信息——点击开启，等待执行</p>
+
+    </div>
 
   </div>
 </template>
@@ -25,6 +34,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.book_p{
+  font-size: medium;
+}
 .home {
   blockquote {
     padding: 10px 20px;
