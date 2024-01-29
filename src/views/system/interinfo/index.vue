@@ -17,14 +17,13 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="请求方式" prop="method">
-        <el-input
-          v-model="queryParams.method"
-          placeholder="请输入请求方式"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="请求方法" prop="method">
+        <el-select v-model="queryParams.method" placeholder="请选择请求方法">
+          <el-option v-for="(item, index) in methodOptions" :key="index" :label="item.label"
+                     :value="item.value" :disabled="item.disabled"></el-option>
+        </el-select>
       </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -86,7 +85,7 @@
       <el-table-column type="index" label="序号" align="center"/>
       <el-table-column label="接口名称" align="center" prop="interName"/>
       <el-table-column label="接口地址" align="center" prop="interUrl"/>
-      <el-table-column label="请求方式" align="center" prop="method"/>
+      <el-table-column label="请求方法" align="center" prop="method"/>
       <el-table-column label="参数类型" align="center" prop="paramType"/>
       <el-table-column label="所属环境" align="center" prop="environmentName"/>
       <el-table-column label="备注" align="center" prop="interComment"/>
@@ -143,9 +142,12 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="所属环境" prop="envirId">
-          <el-select v-model="envir" placeholder="请选择所属环境">
-            <el-option v-for="(item, index) in envirList" :key="index" :label="item.envirName"
+        <el-form-item label="所属环境">
+          <el-select v-model="form.environmentName" placeholder="请选择所属环境" filterable
+                     remote :loading="loading" :remote-method="handleEnvirInput"
+
+                     @focus="getEnvirList(1)">
+            <el-option v-for="(item, index) in envirList" :key="item.envirId" :label="item.envirName"
                        :value="item.envirId" :disabled="item.disabled"></el-option>
           </el-select>
         </el-form-item>
@@ -201,6 +203,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         interName: null,
+        envirName: null,
         interUrl: null,
         method: null,
         paramType: null,
@@ -266,26 +269,49 @@ export default {
     this.getList();
   },
   computed: {
-    envir: {
-      get() {
-        return this.form.envirId;
-      },
-      set(val) {
-        this.form.envirId = val;
-      },
-    },
+    // envir: {
+    //   get() {
+    //     return this.form.envirId;
+    //   },
+    //   set(val) {
+    //     this.form.envirId = val;
+    //   },
+    // },
   },
   methods: {
+
+    /**
+     * 处理环境名称选择（模糊匹配）
+     */
+    handleEnvirInput(query) {
+      if (query !== '') {
+        this.loading = true;
+        console.log(query)
+        this.queryParams.envirName = query;
+        this.getEnvirList();
+      } else {
+        // this.options = [];
+        this.loading = true;
+        this.queryParams.envirName = null;
+        this.getEnvirList();
+      }
+    },
     /**
      * 查询环境列表
      */
-    getEnvirList() {
+    getEnvirList(clear) {
+
+      if (clear === 1) {
+        this.queryParams.envirName = null;
+      }
       listEnvironment(this.queryParams).then(response => {
+        this.loading = false;
         this.envirList = response.rows;
-        console.log(this.envirList)
-        console.log(response.rows)
+        // console.log(this.envirList)
+        // console.log(response.rows)
       })
     },
+
     /** 查询接口管理列表 */
     getList() {
       this.loading = true;
@@ -337,7 +363,7 @@ export default {
       this.open = true;
       this.title = "添加接口管理";
       //  查询环境列表
-      this.getEnvirList();
+      // this.getEnvirList();
 
     },
     /** 修改按钮操作 */
@@ -349,6 +375,8 @@ export default {
         this.caseinfoList = response.data.caseinfoList;
         this.open = true;
         this.title = "修改接口管理";
+        //  查询环境列表
+        // this.getEnvirList();
       });
     },
     /** 提交按钮 */
@@ -356,6 +384,9 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           this.form.caseinfoList = this.caseinfoList;
+          //设置环境id
+          this.form.envirId = this.form.environmentName;
+
           if (this.form.interId != null) {
             updateInterinfo(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -375,7 +406,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const interIds = row.interId || this.ids;
-      this.$modal.confirm('是否确认删除接口管理编号为"' + interIds + '"的数据项？').then(function () {
+      this.$modal.confirm('是否确认删除？').then(function () {
         return delInterinfo(interIds);
       }).then(() => {
         this.getList();

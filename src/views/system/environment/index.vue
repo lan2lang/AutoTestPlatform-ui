@@ -228,7 +228,7 @@ export default {
       const envirId = row.envirId || this.ids
       getEnvironment(envirId).then(response => {
         this.form = response.data;
-        this.interinfoList = response.data.interinfoList;
+        // this.interinfoList = response.data.interinfoList;
         this.open = true;
         this.title = "修改环境";
       });
@@ -257,43 +257,14 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const envirIds = row.envirId || this.ids;
-      this.$modal.confirm('是否确认删除环境编号为"' + envirIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delEnvironment(envirIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-	/** 接口管理序号 */
-    rowInterinfoIndex({ row, rowIndex }) {
-      row.index = rowIndex + 1;
-    },
-    /** 接口管理添加按钮操作 */
-    handleAddInterinfo() {
-      let obj = {};
-      obj.interName = "";
-      obj.interUrl = "";
-      obj.method = "";
-      obj.paramType = "";
-      obj.interComment = "";
-      this.interinfoList.push(obj);
-    },
-    /** 接口管理删除按钮操作 */
-    handleDeleteInterinfo() {
-      if (this.checkedInterinfo.length == 0) {
-        this.$modal.msgError("请先选择要删除的接口管理数据");
-      } else {
-        const interinfoList = this.interinfoList;
-        const checkedInterinfo = this.checkedInterinfo;
-        this.interinfoList = interinfoList.filter(function(item) {
-          return checkedInterinfo.indexOf(item.index) == -1
-        });
-      }
-    },
-    /** 复选框选中数据 */
-    handleInterinfoSelectionChange(selection) {
-      this.checkedInterinfo = selection.map(item => item.index)
-    },
+
     /** 导出按钮操作 */
     handleExport() {
       this.download('system/environment/export', {
