@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="用例名称" prop="caseName">
+        <el-input
+          v-model="queryParams.caseName"
+          placeholder="请输入用例名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="接口名称" prop="interName">
         <el-input
           v-model="queryParams.interName"
@@ -57,6 +65,14 @@
           placeholder="请选择测试时间">
         </el-date-picker>
       </el-form-item>
+      <el-form-item label="用户id" prop="userId">
+        <el-input
+          v-model="queryParams.userId"
+          placeholder="请输入用户id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -64,27 +80,27 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:testresult:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:testresult:edit']"
-        >修改</el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          icon="el-icon-plus"-->
+<!--          size="mini"-->
+<!--          @click="handleAdd"-->
+<!--          v-hasPermi="['system:testresult:add']"-->
+<!--        >新增</el-button>-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="success"-->
+<!--          plain-->
+<!--          icon="el-icon-edit"-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['system:testresult:edit']"-->
+<!--        >修改</el-button>-->
+<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -111,31 +127,35 @@
 
     <el-table v-loading="loading" :data="testresultList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="结果ID" align="center" prop="resultId" />
-      <el-table-column label="接口名称" align="center" prop="interName" />
+      <el-table-column label="序号" align="center" type="index" />
+      <el-table-column label="用例名称" align="center" prop="caseName" />
       <el-table-column label="请求地址" align="center" prop="fullUrl" />
-      <el-table-column label="请求方式" align="center" prop="method" />
-      <el-table-column label="参数类型" align="center" prop="paramType" />
-      <el-table-column label="环境名称" align="center" prop="envirName" />
-      <el-table-column label="备注" align="center" prop="testComment" />
       <el-table-column label="请求头信息" align="center" prop="header" />
       <el-table-column label="请求参数信息" align="center" prop="param" />
       <el-table-column label="响应码" align="center" prop="resCode" />
-      <el-table-column label="响应内容" align="center" prop="resBody" />
+
+      <el-table-column label="响应内容" width="300" align="center" prop="resBody" />
+
+
       <el-table-column label="测试时间" align="center" prop="testTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.testTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="接口名称" align="center" prop="interName" />
+      <el-table-column label="请求方式" align="center" prop="method" />
+      <el-table-column label="参数类型" align="center" prop="paramType" />
+      <el-table-column label="环境名称" align="center" prop="envirName" />
+      <el-table-column label="备注" align="center" prop="testComment" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:testresult:edit']"
-          >修改</el-button>
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            type="text"-->
+<!--            icon="el-icon-edit"-->
+<!--            @click="handleUpdate(scope.row)"-->
+<!--            v-hasPermi="['system:testresult:edit']"-->
+<!--          >修改</el-button>-->
           <el-button
             size="mini"
             type="text"
@@ -146,7 +166,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -158,6 +178,9 @@
     <!-- 添加或修改测试结果对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="用例名称" prop="caseName">
+          <el-input v-model="form.caseName" placeholder="请输入用例名称" />
+        </el-form-item>
         <el-form-item label="接口名称" prop="interName">
           <el-input v-model="form.interName" placeholder="请输入接口名称" />
         </el-form-item>
@@ -234,15 +257,19 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        caseName: null,
         interName: null,
         fullUrl: null,
         method: null,
         paramType: null,
         envirName: null,
         testComment: null,
+        header: null,
+        param: null,
         resCode: null,
         resBody: null,
         testTime: null,
+        userId: null
       },
       // 表单参数
       form: {},
@@ -273,6 +300,7 @@ export default {
     reset() {
       this.form = {
         resultId: null,
+        caseName: null,
         interName: null,
         fullUrl: null,
         method: null,

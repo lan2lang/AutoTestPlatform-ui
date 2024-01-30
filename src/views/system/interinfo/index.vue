@@ -143,7 +143,7 @@
         </el-form-item>
 
         <el-form-item label="所属环境">
-          <el-select v-model="form.environmentName" placeholder="请选择所属环境" filterable
+          <el-select v-model="form.envirId" placeholder="请选择所属环境" filterable
                      remote :loading="loading" :remote-method="handleEnvirInput"
 
                      @focus="getEnvirList(1)">
@@ -385,7 +385,7 @@ export default {
         if (valid) {
           this.form.caseinfoList = this.caseinfoList;
           //设置环境id
-          this.form.envirId = this.form.environmentName;
+          // this.form.envirId = this.form.environmentName;
 
           if (this.form.interId != null) {
             updateInterinfo(this.form).then(response => {

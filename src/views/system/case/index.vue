@@ -130,7 +130,7 @@
         </el-form-item>
 
         <el-form-item label="所属接口">
-          <el-select v-model="form.interName" placeholder="请选择所属接口" filterable
+          <el-select v-model="form.interId" placeholder="请选择所属接口" filterable
                      remote :loading="loading" :remote-method="handleInterInput"
 
                      @focus="getInterList(1)">
@@ -393,8 +393,10 @@ export default {
         param: null,
         interId: null,
         caseDesc: null,
-        userId: null
+        userId: null,
       };
+      this.headerList=null;
+      this.paramList=null;
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -422,6 +424,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
+      console.log(row)
       const caseId = row.caseId || this.ids
       getCase(caseId).then(response => {
         this.form = response.data;
@@ -435,9 +438,8 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          //设置接口id
-          this.form.interId = this.form.interName;
           this.form.headerList = this.headerList;
+          this.form.paramList = this.paramList;
 
           if (this.form.caseId != null) {
             updateCase(this.form).then(response => {

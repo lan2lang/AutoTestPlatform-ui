@@ -62,6 +62,9 @@ dependencies:
   vue-cropper:
     specifier: 0.5.5
     version: 0.5.5
+  vue-json-viewer:
+    specifier: ^2.2.22
+    version: 2.2.22(vue@2.6.12)
   vue-meta:
     specifier: 2.4.0
     version: 2.4.0
@@ -10198,6 +10201,15 @@ packages:
   /vue-hot-reload-api@2.3.4:
     resolution: {integrity: sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==}
     dev: true
+
+  /vue-json-viewer@2.2.22(vue@2.6.12):
+    resolution: {integrity: sha512-3oPH5BxoUWva/qp7wNJj+15FBXyi9Yu5VDW4mCWivjHR1pUpMv34fjqqxML7jh2uOqm1S/3Xks5nQ5JjC5+OWw==}
+    peerDependencies:
+      vue: ^2.6.9
+    dependencies:
+      clipboard: 2.0.8
+      vue: 2.6.12
+    dev: false
 
   /vue-loader@15.11.1(cache-loader@4.1.0)(css-loader@3.6.0)(vue-template-compiler@2.6.12)(webpack@4.47.0):
     resolution: {integrity: sha512-0iw4VchYLePqJfJu9s62ACWUXeSqM30SQqlIftbYWM3C+jpPcEHKSPUZBLjSF9au4HTHQ/naF6OGnO3Q/qGR3Q==}
