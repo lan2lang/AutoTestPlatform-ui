@@ -81,27 +81,26 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" stripe :data="caseList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="caseList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" prop="id"/>
       <el-table-column type="index" label="序号" align="center"/>
       <el-table-column label="用例名称" align="center" prop="caseName"/>
       <el-table-column label="接口名称" align="center" prop="interName"/>
       <el-table-column label="请求地址" align="center" prop="fullUrl"/>
       <el-table-column label="请求方法" align="center" prop="method" width="100"/>
-      <el-table-column label="参数类型" align="center" prop="paramType"  width="60"/>
+      <el-table-column label="参数类型" align="center" prop="paramType" width="100"/>
       <el-table-column label="请求头" align="center" width="300" prop="header"/>
       <el-table-column label="请求参数" align="center" width="300" prop="param"/>
       <el-table-column label="描述" align="center" prop="caseDesc"/>
-      <el-table-column label="操作" fixed="right" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" fixed="right" width="100" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-view"
+            icon="el-icon-s-platform"
             @click="handleRunCase(scope.$index)"
           >执行
-          </el-button
-          >
+          </el-button>
           <el-button
             size="mini"
             type="text"
@@ -464,11 +463,11 @@ export default {
         this.headerList = response.data.headerList;
         this.paramList = response.data.paramList;
 
-        if (this.headerList==null){
-          this.headerList=[];
+        if (this.headerList == null) {
+          this.headerList = [];
         }
-        if (this.paramList==null){
-          this.paramList=[];
+        if (this.paramList == null) {
+          this.paramList = [];
         }
         this.open = true;
         this.title = "修改用例管理";
