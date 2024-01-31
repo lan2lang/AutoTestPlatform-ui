@@ -81,19 +81,27 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="caseList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
+    <el-table v-loading="loading" stripe :data="caseList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" prop="id"/>
       <el-table-column type="index" label="序号" align="center"/>
       <el-table-column label="用例名称" align="center" prop="caseName"/>
       <el-table-column label="接口名称" align="center" prop="interName"/>
       <el-table-column label="请求地址" align="center" prop="fullUrl"/>
-      <el-table-column label="请求方法" align="center" prop="method"/>
-      <el-table-column label="参数类型" align="center" prop="paramType"/>
-      <el-table-column label="请求头" align="center" prop="header"/>
-      <el-table-column label="请求参数" align="center" prop="param"/>
+      <el-table-column label="请求方法" align="center" prop="method" width="100"/>
+      <el-table-column label="参数类型" align="center" prop="paramType"  width="60"/>
+      <el-table-column label="请求头" align="center" width="300" prop="header"/>
+      <el-table-column label="请求参数" align="center" width="300" prop="param"/>
       <el-table-column label="描述" align="center" prop="caseDesc"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" fixed="right" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleRunCase(scope.$index)"
+          >执行
+          </el-button
+          >
           <el-button
             size="mini"
             type="text"
@@ -204,7 +212,7 @@
 </template>
 
 <script>
-import {listCase, getCase, delCase, addCase, updateCase} from "@/api/system/case";
+import {listCase, getCase, delCase, addCase, updateCase, runCase} from "@/api/system/case";
 
 import {listInterinfo} from "@/api/system/interinfo";
 
@@ -341,7 +349,7 @@ export default {
       this.checkedParam = selection.map(item => item.index)
     },
     /**
-     * 处理环境名称选择（模糊匹配）
+     * 处理接口名称选择（模糊匹配）
      */
     handleInterInput(query) {
       if (query !== '') {
@@ -395,8 +403,8 @@ export default {
         caseDesc: null,
         userId: null,
       };
-      this.headerList=null;
-      this.paramList=null;
+      this.headerList = [];
+      this.paramList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -421,15 +429,47 @@ export default {
       this.open = true;
       this.title = "添加用例管理";
     },
+    /**
+     * 执行按钮操作
+     */
+    handleRunCase(index) {
+      console.log(this.caseList[index])
+      // // console.log(this.caseList)
+      this.caseList[index].paramList = JSON.parse(this.caseList[index].param);
+      // console.log(JSON.parse(this.caseList[index].param));
+      this.caseList[index].headerList = JSON.parse(this.caseList[index].header);
+      this.$modal.loading("正在执行，请稍候...");
+      //发送请求
+      runCase(this.caseList[index]).then(response => {
+
+        this.$modal.closeLoading();
+        this.$modal.msgSuccess("执行成功，请前往测试结果查看");
+
+      });
+
+      // setTimeout(this.$modal.closeLoading(), 1000)
+
+
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      console.log(row)
+      // console.log(row)
       const caseId = row.caseId || this.ids
+
+      this.getInterList(1)
       getCase(caseId).then(response => {
         this.form = response.data;
+
         this.headerList = response.data.headerList;
         this.paramList = response.data.paramList;
+
+        if (this.headerList==null){
+          this.headerList=[];
+        }
+        if (this.paramList==null){
+          this.paramList=[];
+        }
         this.open = true;
         this.title = "修改用例管理";
       });
@@ -442,6 +482,7 @@ export default {
           this.form.paramList = this.paramList;
 
           if (this.form.caseId != null) {
+            // console.log(this.form)
             updateCase(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;

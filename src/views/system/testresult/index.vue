@@ -65,14 +65,7 @@
           placeholder="请选择测试时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="用户id" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -131,7 +124,7 @@
       <el-table-column label="用例名称" align="center" prop="caseName" />
       <el-table-column label="请求地址" align="center" prop="fullUrl" />
       <el-table-column label="请求头信息" align="center" prop="header" />
-      <el-table-column label="请求参数信息" align="center" prop="param" />
+      <el-table-column label="请求参数信息"  width="300" align="center" prop="param" />
       <el-table-column label="响应码" align="center" prop="resCode" />
 
       <el-table-column label="响应内容" width="300" align="center" prop="resBody" />
@@ -146,7 +139,6 @@
       <el-table-column label="请求方式" align="center" prop="method" />
       <el-table-column label="参数类型" align="center" prop="paramType" />
       <el-table-column label="环境名称" align="center" prop="envirName" />
-      <el-table-column label="备注" align="center" prop="testComment" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
 <!--          <el-button-->
@@ -371,7 +363,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const resultIds = row.resultId || this.ids;
-      this.$modal.confirm('是否确认删除测试结果编号为"' + resultIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delTestresult(resultIds);
       }).then(() => {
         this.getList();

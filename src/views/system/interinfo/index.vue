@@ -370,6 +370,8 @@ export default {
     handleUpdate(row) {
       this.reset();
       const interId = row.interId || this.ids
+      this.getEnvirList(1)
+
       getInterinfo(interId).then(response => {
         this.form = response.data;
         this.caseinfoList = response.data.caseinfoList;

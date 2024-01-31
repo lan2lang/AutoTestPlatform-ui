@@ -26,6 +26,15 @@ export function addCase(data) {
   })
 }
 
+// 执行用例
+export function runCase(data) {
+  return request({
+    url: '/system/testresult/execute',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改用例管理
 export function updateCase(data) {
   return request({
