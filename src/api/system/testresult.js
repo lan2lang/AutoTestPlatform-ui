@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 生成测试报告
+export function genTestReport(query) {
+  return request({
+    url: '/report',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询测试结果列表
 export function listTestresult(query) {
   return request({

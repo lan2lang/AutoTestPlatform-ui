@@ -9,9 +9,9 @@
       <p class="book_p">step2：维护接口api：点击接口管理——新增——填写接口信息提交</p>
       <p class="book_p">step3：维护用例信息：点击用例管理——新增——填写用例信息提交</p>
       <p class="book_p">
-        step4：维护测试集信息：点击测试集管理——新增测试集信息——点击用例管理添加该测试集所需的用例及执行信息</p>
+        step4：执行用例：点击用例管理——执行</p>
       <p class="book_p">
-        step5：维护任务信息：点击任务管理——新增执行任务信息——点击测试集管理添加该任务所需的测试集等信息——点击开启，等待执行</p>
+        step5：查看测试结果：点击测试结果——查看</p>
 
 <!--      <img src="http://localhost:8089/test/1">-->
 <!--      <img src="https://raw.githubusercontent.com/lan2lang/lsp_pic/master/lsp-db2/P-FXHMRW%40FXHMRW%20(3)">-->

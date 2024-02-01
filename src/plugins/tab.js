@@ -64,6 +64,13 @@ export default {
     store.dispatch('tagsView/addView', obj);
     return router.push({ path: url, query: params });
   },
+  // 添加tab页签
+  openMyPage(title, url, params) {
+    const obj = { path: url, meta: { title: title } }
+    store.dispatch('tagsView/addView', obj);
+    return router.push({ path: url, params: params });
+  },
+
   // 修改tab页签
   updatePage(obj) {
     return store.dispatch('tagsView/updateVisitedView', obj);

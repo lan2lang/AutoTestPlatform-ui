@@ -41,14 +41,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="备注" prop="testComment">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.testComment"-->
-<!--          placeholder="请输入备注"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
+      <!--      <el-form-item label="备注" prop="testComment">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.testComment"-->
+      <!--          placeholder="请输入备注"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <el-form-item label="响应码" prop="resCode">
         <el-input
           v-model="queryParams.resCode"
@@ -116,6 +116,14 @@
           v-hasPermi="['system:testresult:export']"
         >导出
         </el-button>
+        <el-button
+          type="success"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleCreateReport"
+        >生成报告
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -179,9 +187,9 @@
 
     <!-- 添加或修改测试结果对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
-      <el-form ref="form" :model="form"  :disabled="false" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :disabled="false" :rules="rules" label-width="80px">
         <el-form-item label="用例名称" prop="caseName">
-          <el-input v-model="form.caseName"  readonly placeholder="请输入用例名称"/>
+          <el-input v-model="form.caseName" readonly placeholder="请输入用例名称"/>
         </el-form-item>
         <el-form-item label="接口名称" prop="interName">
           <el-input v-model="form.interName" readonly placeholder="请输入接口名称"/>
@@ -232,7 +240,14 @@
 </template>
 
 <script>
-import {listTestresult, getTestresult, delTestresult, addTestresult, updateTestresult} from "@/api/system/testresult";
+import {
+  listTestresult,
+  getTestresult,
+  delTestresult,
+  addTestresult,
+  genTestReport,
+  updateTestresult
+} from "@/api/system/testresult";
 
 export default {
   name: "Testresult",
@@ -250,6 +265,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+
       // 测试结果表格数据
       testresultList: [],
       // 弹出层标题
@@ -284,7 +300,21 @@ export default {
     this.getList();
   },
   methods: {
-
+    /**
+     * 生成报告
+     */
+    handleCreateReport() {
+      //请求报告接口，携带参数（query）
+      this.loading = true;
+      genTestReport(this.queryParams).then(response => {
+        // console.log(response.data)
+        this.loading = false;
+        this.$tab.openPage("测试报告", "/report").then(() => {
+          // session JSON值
+          this.$cache.session.setJSON('reportData', response.data)
+        });
+      });
+    },
     /**
      * 查看详细测试结果
      */
@@ -299,6 +329,7 @@ export default {
     getList() {
       this.loading = true;
       listTestresult(this.queryParams).then(response => {
+        // console.log(JSON.stringify(response.rows))
         this.testresultList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -395,9 +426,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/testresult/export', {
-        ...this.queryParams
-      }, `testresult_${new Date().getTime()}.xlsx`)
+      this.download('system/testresult/export',
+        {...this.queryParams},
+        `testresult_${new Date().getTime()}.xlsx`)
     }
   }
 };
